@@ -4,11 +4,6 @@ from trafilatura import fetch_url, extract
 import trafilatura
 import re, html
 from markdownify import markdownify
-from langchain.text_splitter import MarkdownHeaderTextSplitter, MarkdownTextSplitter
-from openai import OpenAI
-from dotenv import load_dotenv
-
-load_dotenv()  # take environment variables
 
 
 def normalize_text(text):
@@ -65,10 +60,10 @@ def parse_html(raw_html, url=None):
 async def main():
     # TODO (2025-08-26) Implement ingestion + chunking + embeddings (pgvector)
     # ingest the source given
-    sample_url = "https://avatar.fandom.com/wiki/Avatar:_The_Last_Airbender"
-    async with httpx.AsyncClient() as client:
-        r = await client.get(sample_url)
-        raw_html = r.text
+    # sample_url = "https://avatar.fandom.com/wiki/Avatar:_The_Last_Airbender"
+    # async with httpx.AsyncClient() as client:
+    #     r = await client.get(sample_url)
+    #     sample_html = r.text
 
     # # clean the source data
     # soup = BeautifulSoup(sample_html, "lxml")
@@ -94,37 +89,21 @@ async def main():
     # parsed_text = trafilatura.extract(str(soup), url=sample_url, favor_precision=True)
     # print(parsed_text)
 
-    # raw_html = fetch_url("https://avatar.fandom.com/wiki/Avatar:_The_Last_Airbender")
-    parsed_text_md = markdownify(raw_html, heading_style="ATX")
-    splitter = MarkdownTextSplitter(chunk_size=250, chunk_overlap=4)
-    split_text = splitter.create_documents([parsed_text_md])
-    # parsed_text = parse_html(raw_html)
+    raw_html = fetch_url("https://avatar.fandom.com/wiki/Avatar:_The_Last_Airbender")
+    parsed_text = parse_html(raw_html)
 
     # output main content and comments as plain text
     # parsed_text = extract(downloaded)
     # parsed_text = html.unescape(parsed_text)
     # parsed_text = re.sub(r"\s+", " ", parsed_text)
     # parsed_text = markdownify(parsed_text, heading_style="ATX")
-    with open("cleaned_html.py", "w") as fp:
-        fp.write(str(split_text))
+    with open("cleaned_html.text", "w") as fp:
+        fp.write(parsed_text)
 
     # segement the cleaned data into chuncks
 
     # embed the segmented data
-    client = OpenAI()
-    embeddings = []
-    for doc in split_text:
-        vec = (
-            client.embeddings.create(
-                model="text-embedding-3-large", input=split_text[0].page_content
-            )
-            .data[0]
-            .embedding
-        )
-        embeddings.append(vec)
-
     # store in a vector DB
-
     # take user's query
     # embed the query
     # use both embeddings to do knn search in vectory DB

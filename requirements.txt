@@ -1,2 +1,9 @@
 fastapi 
 uvicorn
+lxml
+beautifulsoup4
+httpx
+trafilatura
+readability
+langchain
+openai

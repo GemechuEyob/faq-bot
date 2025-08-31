@@ -9,4 +9,5 @@ This is a FAQ Bot that will take in a document, website, PDF or a folder of docs
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+
 ```

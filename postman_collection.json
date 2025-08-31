@@ -1,0 +1,111 @@
+{
+  "info": {
+    "name": "FastAPI Scraper API",
+    "description": "Postman collection for FastAPI Scraper API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Scraped Data",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "YOUR_API_KEY"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/data?search=example&url=example.com&limit=100&offset=0",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["data"],
+          "query": [
+            { "key": "search", "value": "example" },
+            { "key": "url", "value": "example.com" },
+            { "key": "limit", "value": "100" },
+            { "key": "offset", "value": "0" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Find Similar Content by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "YOUR_API_KEY"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/data/similar/1?limit=5&threshold=0.7",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["data", "similar", "1"],
+          "query": [
+            { "key": "limit", "value": "5" },
+            { "key": "threshold", "value": "0.7" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Search Similar Content",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "YOUR_API_KEY"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"text\": \"example text\",\n    \"limit\": 5,\n    \"threshold\": 0.7\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/data/search",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["data", "search"]
+        }
+      }
+    },
+    {
+      "name": "Trigger Scrape",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "YOUR_API_KEY"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"urls\": [\n        \"http://example.com\",\n        \"http://another-example.com\"\n    ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/scrape/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["scrape"]
+        }
+      }
+    }
+  ]
+}

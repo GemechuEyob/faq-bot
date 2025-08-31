@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 from fastapi import Depends, FastAPI, Query
@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from .db import ScrapedData, get_db
 from .embedder import embedder
 from .scraper import scrape_url
+from .bot import prompt
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -22,10 +23,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-class SimilaritySearch(BaseModel):
-    text: str
-    limit: int = 5
-    threshold: float = 0.7
+class BotRequest(BaseModel):
+    query: str
 
 
 class ScrapeRequest(BaseModel):
@@ -42,11 +41,53 @@ def trigger_scrape(request: ScrapeRequest, db: Session = Depends(get_db)):
 
 
 @app.get("/v1/data/{data_id}")
-def get_scrapped_data_by_id(data_id: int):
-    pass
+def get_scraped_data_by_id(data_id: int, db: Session = Depends(get_db)):
+    item = db.query(ScrapedData).filter(ScrapedData.id == data_id).first()
+    if not item:
+        return JSONResponse(
+            status_code=404,
+            content={"detail": "Scraped data not found for the given ID."},
+        )
+    return JSONResponse(
+        content={
+            "id": item.id,
+            "url": item.url,
+            "content": item.content,
+            "scraped_at": item.scraped_at.isoformat() if item.scraped_at else None,
+        }
+    )
 
 
-@app.get("/v1/search")
+@app.get("/v1/data/")
+def get_scraped_data(
+    search: Optional[str] = Query(None, description="Search in content"),
+    url: Optional[str] = Query(None, description="Filter by URL"),
+    limit: int = Query(100, description="Max number of results"),
+    offset: int = Query(0, description="Results offset"),
+    db: Session = Depends(get_db),
+):
+    """Get scraped data with optional filtering."""
+    query = db.query(ScrapedData)
+    if search:
+        query = query.filter(ScrapedData.content.ilike(f"%{search}%"))
+    if url:
+        query = query.filter(ScrapedData.url == url)
+    results = query.offset(offset).limit(limit).all()
+
+    return JSONResponse(
+        content=[
+            {
+                "id": item.id,
+                "url": item.url,
+                "content": item.content[:200] + "...",
+                "scraped_at": item.scraped_at.isoformat() if item.scraped_at else None,
+            }
+            for item in results
+        ]
+    )
+
+
+@app.post("/v1/data/search")
 def search_similar_content(
     text: str = Query(..., description="Text to search for similar content"),
     limit: int = Query(5, description="Number of similar items to return"),
@@ -91,6 +132,19 @@ def search_similar_content(
         logger.error(f"Search error: {str(e)}")
         return JSONResponse(
             status_code=500, content={"detail": "An error occured during search."}
+        )
+
+
+@app.post("/v1/bot")
+def prompt_bot(request: BotRequest, db: Session = Depends(get_db)):
+    try:
+        response = prompt(request.query, db)
+        return JSONResponse(content={"response": response})
+
+    except Exception as e:
+        logger.error(f"Bot response error: {str(e)}")
+        return JSONResponse(
+            status_code=500, content={"detail": "An error occured during bot response."}
         )
 
 

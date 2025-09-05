@@ -2,7 +2,6 @@ import json
 import os
 
 from dotenv import load_dotenv
-from openai import api_key
 from pydantic_settings import BaseSettings
 
 load_dotenv()

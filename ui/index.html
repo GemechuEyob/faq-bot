@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Bot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>FAQ Bot</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-page="bot">
+                        <span class="nav-icon">🤖</span>
+                        Bot Chat
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="knowledge">
+                        <span class="nav-icon">📚</span>
+                        Knowledge Base
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div id="bot-page" class="page active">
+                <div class="page-header">
+                    <h1>Chat with Bot</h1>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot-message">
+                            <div class="message-content">
+                                <strong>Bot:</strong> Hello! I'm your FAQ bot. Ask me anything!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <div class="input-group">
+                            <input type="text" id="chat-input" placeholder="Type your question here..." />
+                            <button id="send-button">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="knowledge-page" class="page">
+                <div class="page-header">
+                    <h1>Knowledge Base Management</h1>
+                </div>
+                
+                <div class="kb-section">
+                    <div class="kb-controls">
+                        <button id="add-article-btn" class="control-button add-button">Add Article</button>
+                        <div class="search-container">
+                            <input type="text" id="search-input" placeholder="Search articles..." />
+                            <button id="search-btn" class="control-button search-button">Search</button>
+                        </div>
+                    </div>
+
+                    <div id="status-message" class="status-message"></div>
+
+                    <div class="table-container">
+                        <table id="articles-table" class="articles-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>URL</th>
+                                    <th>Content Preview</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="articles-table-body">
+                                <!-- Articles will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            <span id="pagination-info">Showing 0-0 of 0 articles</span>
+                        </div>
+                        <div class="pagination-controls">
+                            <button id="prev-page" class="pagination-btn" disabled>Previous</button>
+                            <span id="page-numbers" class="page-numbers"></span>
+                            <button id="next-page" class="pagination-btn" disabled>Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Article Modal -->
+                <div id="add-article-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Add New Article</h3>
+                            <span class="close-modal">&times;</span>
+                        </div>
+                        <form id="add-article-form">
+                            <div class="form-group">
+                                <label for="article-url">Article URL:</label>
+                                <input type="url" id="article-url" placeholder="https://example.com/article" required />
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="cancel-btn">Cancel</button>
+                                <button type="submit" class="submit-btn">Add Article</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

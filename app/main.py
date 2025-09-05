@@ -4,6 +4,7 @@ from typing import List, Optional
 
 import numpy as np
 from fastapi import Depends, FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -19,6 +20,15 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
